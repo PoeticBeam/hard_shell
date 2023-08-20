@@ -1,21 +1,24 @@
 #include "main.h"
 
-int main(int ac, char **argv)
+int main(void)
 {
 	char *prompt = "SS-Shell >> ";
-	char *lineptr;
+	char *linepointer = NULL;
+	char *linepointercpy = NULL;
 	size_t n = 0;
 	ssize_t num_char_read;
-
-	/* declaring void variables */
-	(void)ac; (void)argv;
+	const char *delimiter = " \n";
+	int token_counter = 0;
+	int x;
+	char *token;
+	char **argv;
 
 	/* infinite loop */
 	while(1)
 	{
 		printf("%s", prompt);
-		num_char_read = getline(&lineptr, &n, stdin);
-
+		num_char_read = getline(&linepointer, &n, stdin);
+		
 		/* checks if the getline function failed or reached EOF or user CtrlD */
 		if (num_char_read == -1)
 		{
@@ -23,10 +26,56 @@ int main(int ac, char **argv)
 			return (-1);
 		}
 
-		printf("%s\n", lineptr);
+		/* memory allocation using return value of num_char to linepointercopy */
+		linepointercpy = malloc(sizeof(char) * num_char_read);
+		if (linepointercpy == NULL)
+		{
+			perror("tsh: memory allocation failed");
+			return (-1);
+		}
+
+		/* copies string in linepointer to linepointercopy */
+		strcpy(linepointercpy, linepointer);
+		/*now we separate by delimiter, str linepointer into array of words */
+		token = strtok(linepointer, delimiter);
+
+		/* let's see how many tokens */
+		while (token != NULL)
+		{
+			token_counter++;
+			token = strtok(NULL, delimiter);
+		}
+		token_counter++;
+
+		/* array to store string tokens after counting characters before delimiter */		
+		argv = malloc(sizeof(char *) * token_counter);
+
+		/* we first allocated space to store the array, now we store str tokens in array */
+		for (x = 0; token != NULL; x++)
+		{
+			argv[x] = malloc(sizeof(char *) * strlen(token));
+			strcpy(argv[x], token);
+
+			token = strtok(NULL, delimiter);
+		}
+		argv[x] = NULL;
+
+		/* test 1 */
+		/* display tokens in argv array */
+		int counter = 0;
+		for (counter = 0; counter < token_counter - 1; counter++)
+		{
+			printf("%s\n", argv[counter]);
+		}
+		/* test 1 ends */
+
+		printf("%s\n", linepointer);
 		
 		/* free allocated memory */
-		free(lineptr);
+		free(argv);
+		free(linepointercpy);
+		free(linepointer);
+	
 	}
 	return (0);
 }
