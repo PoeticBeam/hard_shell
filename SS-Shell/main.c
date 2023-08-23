@@ -17,17 +17,17 @@ int main(void)
 	/* declaring void variables */
 	/* void(ac); */
 
-	/* infinite loop */ 
-	while(1)
+	/* infinite loop */
+	while (1)
 	{
 		printf("%s", prompt);
 		num_char_read = getline(&linepointer, &n, stdin);
-		
+
 		/* checks if the getline function failed or reached EOF or user CtrlD */
 		if (num_char_read == -1)
 		{
 			printf("\nLogging off <<<   \n");
-			return (-1);
+			exit(EXIT_FAILURE);
 		}
 
 		/* memory allocation using return value of num_char to linepointercopy */
@@ -51,10 +51,11 @@ int main(void)
 			token = strtok(NULL, delimiter);
 		}
 		token_counter++;
-		/* array to store string tokens after counting characters before delimiter */		
+		/* array to store string tokens after counting characters */
 		argv = malloc(sizeof(char *) * token_counter);
 
-		/* we first allocated space to store the array, now we store str tokens in array */
+		/* we first allocated space to store the array, */
+		/* now we store str tokens in array */
 		token = strtok(linepointercpy, delimiter);
 
 		for (x = 0; token != NULL; x++)
@@ -66,18 +67,9 @@ int main(void)
 		}
 		argv[x] = NULL;
 
-		/* test 1 */
-		/* display tokens in argv array */
-		/* for (test_counter = 0; test_counter < token_counter - 1; test_counter++)
-		{
-			printf("%s\n", argv[test_counter]);
-		} */
-		/* test 1 ends */
-		
-		/* free allocated memory */
-		execmd(argv);
+		exec(argv);
 	}
-
+	/* free allocated mem */
 	free(argv);
 	free(linepointercpy);
 	return (0);
